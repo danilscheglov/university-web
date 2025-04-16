@@ -1,0 +1,62 @@
+.form-container {
+    background: #fff;
+    border-radius: 15px;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1),
+        0 0 0 3px rgba(66, 153, 225, 0.1) inset;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+.form-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15),
+        0 0 0 3px rgba(66, 153, 225, 0.2) inset;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.color-option {
+    position: relative;
+    padding-left: 35px !important;
+}
+
+.color-option::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.compact-form .form-control {
+    font-size: 0.9em;
+    padding: 0.4rem 0.75rem;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.is-valid {
+    border-color: #198754 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    background-image: none;
+}
