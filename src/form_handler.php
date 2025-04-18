@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/config/database.php';
+
 $allowedColors = [
     'Белый',
     'Чёрный',
@@ -63,20 +65,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['errors'] = array_filter($errors);
 
     if (empty(array_filter($errors))) {
-        $filename = 'data/cars.csv';
         try {
-            $file = fopen($filename, 'a');
-
-            if (filesize($filename) === 0) {
-                fputcsv($file, ['Марка', 'Модель', 'Год', 'Цвет'], ';');
-            }
-
-            fputcsv($file, [$brand, $model, $year, $color], ';');
-            fclose($file);
+            $stmt = $pdo->prepare("
+                INSERT INTO cars (brand, model, year, color)
+                VALUES (:brand, :model, :year, :color)
+            ");
+            $stmt->execute([
+                ':brand' => $brand,
+                ':model' => $model,
+                ':year' => $year,
+                ':color' => $color
+            ]);
 
             $_SESSION['success'] = true;
-        } catch (Exception $e) {
-            $_SESSION['errors']['general'] = 'Ошибка записи: ' . $e->getMessage();
+        } catch (PDOException $e) {
+            $_SESSION['errors']['database'] = 'Ошибка сохранения: ' . $e->getMessage();
         }
     }
 

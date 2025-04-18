@@ -1,14 +1,15 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/config/database.php';
+
 $errors = $_SESSION['errors'] ?? [];
 $formData = $_SESSION['form_data'] ?? [];
 $success = $_SESSION['success'] ?? false;
 
-unset($_SESSION['errors']);
-unset($_SESSION['form_data']);
-unset($_SESSION['success']);
+unset($_SESSION['errors'], $_SESSION['form_data'], $_SESSION['success']);
 ?>
+
 <!doctype html>
 <html lang="ru">
 
@@ -16,11 +17,27 @@ unset($_SESSION['success']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="../public/assets/css/main.css">
     <title>Добавить автомобиль</title>
 </head>
 
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">Автосалон</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="form.php">Добавить автомобиль</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cars.php">Список автомобилей</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">

@@ -60,3 +60,53 @@
 .was-validated .form-select:invalid {
     background-image: none;
 }
+
+.color-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.badge.bg-primary {
+    padding: 0.5em 0.75em;
+    font-size: 0.9em;
+}
+
+.table {
+    box-shadow:
+            0 2px 5px rgba(0, 0, 0, 0.1),
+            0 10px 20px rgba(0, 0, 0, 0.08),
+            0 15px 30px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-hover tbody tr:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+@media (min-width: 1200px) {
+    .table-responsive {
+        overflow-x: visible;
+    }
+
+    .table {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+}
+
+@media (max-width: 1199px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
