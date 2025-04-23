@@ -1,0 +1,101 @@
+{% extends 'base.twig' %}
+
+{% block title %}Добавить автомобиль{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="form-container">
+            <div class="form-header">
+                <h3 class="text-center mb-0">Добавить автомобиль</h3>
+            </div>
+
+            <form action="/car/add" method="POST" class="p-4 compact-form" id="carForm" novalidate>
+                {% if success %}
+                    <div class="alert alert-success">
+                        Данные успешно сохранены!
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="brand" class="form-label">Марка</label>
+                    <input type="text"
+                        class="form-control shadow-sm {% if errors.brand is defined %}is-invalid{% endif %}"
+                        id="brand"
+                        name="brand"
+                        required
+                        placeholder="Например, Toyota"
+                        maxlength="50"
+                        pattern="[\p{L}0-9\s\-]+"
+                        title="Только буквы, цифры и дефисы (макс. 50 символов)"
+                        value="{{ formData.brand|e }}">
+                    {% if errors.brand is defined %}
+                        <div class="invalid-feedback">{{ errors.brand }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="model" class="form-label">Модель</label>
+                    <input type="text"
+                        class="form-control shadow-sm {% if errors.model is defined %}is-invalid{% endif %}"
+                        id="model"
+                        name="model"
+                        required
+                        placeholder="Например, Camry XV70"
+                        maxlength="50"
+                        pattern="[\p{L}0-9\s\-\.]+"
+                        title="Только буквы, цифры, точки и дефисы (макс. 50 символов)"
+                        value="{{ formData.model|e }}">
+                    {% if errors.model is defined %}
+                        <div class="invalid-feedback">{{ errors.model }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="year" class="form-label">Год выпуска</label>
+                    <input type="number"
+                        class="form-control shadow-sm {% if errors.year is defined %}is-invalid{% endif %}"
+                        id="year"
+                        name="year"
+                        min="1900"
+                        max="{{ "now"|date("Y") + 1 }}"
+                        placeholder="Например, 2025"
+                        value="{{ formData.year }}">
+                    {% if errors.year is defined %}
+                        <div class="invalid-feedback">{{ errors.year }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="color" class="form-label">Цвет</label>
+                    <select class="form-select {% if errors.color is defined %}is-invalid{% endif %}"
+                        id="color"
+                        name="color"
+                        required>
+                        <option value="" disabled {% if formData.color is empty %}selected{% endif %}>Выберите цвет...</option>
+                        {% for group, colors in colorGroups %}
+                            <optgroup label="{{ group }}">
+                                {% for color in colors %}
+                                    <option value="{{ color }}" {% if formData.color == color %}selected{% endif %}>
+                                        {{ color }}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                    {% if errors.color is defined %}
+                        <div class="invalid-feedback">{{ errors.color }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-lg py-2">
+                        Сохранить
+                    </button>
+                </div>
+                <div id="message" class="mt-3 alert d-none"></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

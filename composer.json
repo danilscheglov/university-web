@@ -1,0 +1,17 @@
+{
+  "name": "danil/university-web",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Danil Scheglov",
+      "email": "scheglovofficial@gmail.com"
+    }
+  ],
+  "require": {
+    "twig/twig": "^3.20"
+  }
+}
