@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use PDO;
 use PDOException;
-use App\Config\Database;
+use App\Core\Database;
 use Exception;
 
 class CarModel
@@ -42,12 +41,46 @@ class CarModel
     public function __construct()
     {
         $this->pdo = Database::getConnection();
+        $this->initializeTable();
+    }
+
+    private function initializeTable(): void
+    {
+        $sql = "
+        CREATE TABLE IF NOT EXISTS cars (
+            id SERIAL PRIMARY KEY,
+            brand VARCHAR(50) NOT NULL,
+            model VARCHAR(50) NOT NULL,
+            year INT NOT NULL,
+            color VARCHAR(50) NOT NULL,
+            user_id INT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+        )";
+
+        $this->pdo->exec($sql);
     }
 
     public function getAllCars(): array
     {
         try {
-            $stmt = $this->pdo->query("SELECT * FROM cars ORDER BY year DESC");
+            if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
+                $stmt = $this->pdo->query("
+                    SELECT c.*, u.username as owner_name 
+                    FROM cars c 
+                    LEFT JOIN users u ON c.user_id = u.id 
+                    ORDER BY c.year DESC
+                ");
+            } else {
+                $stmt = $this->pdo->prepare("
+                    SELECT c.*, u.username as owner_name 
+                    FROM cars c 
+                    LEFT JOIN users u ON c.user_id = u.id 
+                    WHERE c.user_id = :user_id
+                    ORDER BY c.year DESC
+                ");
+                $stmt->execute([':user_id' => $_SESSION['user']['id'] ?? 0]);
+            }
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             throw new Exception("Ошибка получения данных: " . $e->getMessage());
@@ -58,15 +91,16 @@ class CarModel
     {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO cars (brand, model, year, color)
-                VALUES (:brand, :model, :year, :color)
+                INSERT INTO cars (brand, model, year, color, user_id)
+                VALUES (:brand, :model, :year, :color, :user_id)
             ");
 
             return $stmt->execute([
                 ':brand' => $brand,
                 ':model' => $model,
                 ':year' => $year,
-                ':color' => $color
+                ':color' => $color,
+                ':user_id' => $_SESSION['user']['id'] ?? null
             ]);
         } catch (PDOException $e) {
             throw new Exception("Ошибка сохранения: " . $e->getMessage());
@@ -106,5 +140,23 @@ class CarModel
             'Эксклюзивные цвета' => ['Хамелеон', 'Карбоновый', 'Жемчужный', 'Ультрамарин', 'Коралловый'],
             'Двухцветные комбинации' => ['Чёрно-белый', 'Красно-чёрный', 'Сине-серебристый', 'Оранжево-графитовый']
         ];
+    }
+
+    public function deleteCarById(int $id): bool
+    {
+        try {
+            if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
+                $stmt = $this->pdo->prepare("DELETE FROM cars WHERE id = :id");
+                return $stmt->execute([':id' => $id]);
+            } else {
+                $stmt = $this->pdo->prepare("DELETE FROM cars WHERE id = :id AND user_id = :user_id");
+                return $stmt->execute([
+                    ':id' => $id,
+                    ':user_id' => $_SESSION['user']['id'] ?? 0
+                ]);
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Ошибка удаления: " . $e->getMessage());
+        }
     }
 }

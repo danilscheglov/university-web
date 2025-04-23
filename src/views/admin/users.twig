@@ -1,0 +1,89 @@
+{% extends 'base.twig' %}
+
+{% block title %}Управление пользователями{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Управление пользователями</h3>
+            </div>
+            
+            <div class="card-body">
+                {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Имя</th>
+                                <th>Email</th>
+                                <th>Роль</th>
+                                <th>Дата регистрации</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.username }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <span class="badge {{ user.role == 'admin' ? 'bg-danger' : 'bg-primary' }}">
+                                            {{ user.role }}
+                                        </span>
+                                    </td>
+                                    <td>{{ user.created_at | date('d.m.Y H:i') }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <form action="/admin/user/role" method="post" class="me-2">
+                                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                <input type="hidden" name="role" value="{{ user.role == 'admin' ? 'user' : 'admin' }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-primary"
+                                                    {{ user.email == 'admin@example.com' ? 'disabled' : '' }}>
+                                                {% if user.role == 'admin' %}
+                                                    Сделать пользователем
+                                                {% else %}
+                                                    Сделать администратором
+                                                {% endif %}
+                                                </button>
+                                            </form>
+                                            <form action="/admin/user/delete" method="post">
+                                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    {{ (user.email == 'admin@example.com' or user.email == session.user.email) ? 'disabled' : '' }}
+                                                    onclick="return confirm('Вы уверены, что хотите удалить этого пользователя?')">
+                                                    Удалить
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Нет пользователей</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

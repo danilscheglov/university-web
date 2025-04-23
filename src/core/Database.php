@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Config;
+namespace App\Core;
 
 use PDO;
 use PDOException;

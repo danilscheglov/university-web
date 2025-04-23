@@ -1,0 +1,81 @@
+{% extends 'base.twig' %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="form-container">
+            <div class="form-header">
+                <h3 class="text-center mb-0">Вход в систему</h3>
+            </div>
+
+            <form action="/login" method="POST" class="p-4 compact-form" id="loginForm" novalidate>
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email"
+                        class="form-control shadow-sm {% if errors.email is defined %}is-invalid{% endif %}"
+                        id="email"
+                        name="email"
+                        required
+                        placeholder="Введите ваш email"
+                        value="{{ formData.email|e }}">
+                    {% if errors.email is defined %}
+                        <div class="invalid-feedback">{{ errors.email }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Пароль</label>
+                    <div class="input-group">
+                        <input type="password"
+                            class="form-control shadow-sm {% if errors.password is defined %}is-invalid{% endif %}"
+                            id="password"
+                            name="password"
+                            required
+                            placeholder="Введите пароль">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        {% if errors.password is defined %}
+                            <div class="invalid-feedback">{{ errors.password }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-lg py-2">
+                        Войти
+                    </button>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <p>Ещё нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    });
+</script>
+{% endblock %}

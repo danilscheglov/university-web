@@ -21,7 +21,10 @@ class CarController
             'debug' => true,
         ]);
 
+        $this->twig->addGlobal('session', $_SESSION);
+
         $this->twig->addFunction(new TwigFunction('getColorHex', [Helpers::class, 'getColorHex']));
+        $this->twig->addGlobal('session', $_SESSION);
 
         $this->carModel = new CarModel();
     }
@@ -47,8 +50,15 @@ class CarController
         try {
             $cars = $this->carModel->getAllCars();
 
+            $success = $_SESSION['success'] ?? null;
+            $error = $_SESSION['error'] ?? null;
+
+            unset($_SESSION['success'], $_SESSION['error']);
+
             echo $this->twig->render('car/list.twig', [
-                'cars' => $cars
+                'cars' => $cars,
+                'success' => $success,
+                'error' => $error
             ]);
         } catch (\Exception $e) {
             echo $this->twig->render('error.twig', [
@@ -81,7 +91,27 @@ class CarController
             $_SESSION['errors'] = $errors;
         }
 
-        header('Location: /');
+        header('Location: /car/add');
+        exit;
+    }
+
+    public function deleteCar(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['car_id'])) {
+            $carId = (int)$_POST['car_id'];
+
+            try {
+                if ($this->carModel->deleteCarById($carId)) {
+                    $_SESSION['success'] = 'Автомобиль успешно удален';
+                } else {
+                    $_SESSION['error'] = 'Не удалось удалить автомобиль';
+                }
+            } catch (\Exception $e) {
+                $_SESSION['error'] = 'Ошибка при удалении автомобиля: ' . $e->getMessage();
+            }
+        }
+
+        header('Location: /cars');
         exit;
     }
 }

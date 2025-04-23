@@ -5,46 +5,96 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-12 col-xl-10">
-        <div class="card-header border-0 pt-4">
-            <h3 class="card-title text-center mb-3">
-                Список автомобилей
-            </h3>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Марка</th>
-                            <th>Модель</th>
-                            <th>Год</th>
-                            <th>Цвет</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for car in cars %}
-                            <tr class="position-relative">
-                                <td>{{ car.brand }}</td>
-                                <td>{{ car.model }}</td>
-                                <td>
-                                    <span class="badge bg-primary rounded-pill">
-                                        {{ car.year }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="color-preview rounded-circle"
-                                        style="background-color: {{ getColorHex(car.color) }}">
-                                    </div>
-                                    {{ car.color }}
-                                </td>
-                            </tr>
-                        {% else %}
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center pt-4">
+                <h3 class="card-title text-center mb-0">
+                    {% if session.user.role == 'admin' %}
+                        Все автомобили
+                    {% else %}
+                        Мои автомобили
+                    {% endif %}
+                </h3>
+                <a href="/car/add" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> Добавить новый
+                </a>
+            </div>
+            
+            <div class="card-body">
+                {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ success }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <td colspan="4" class="text-center">Нет автомобилей для отображения</td>
+                                <th>Марка</th>
+                                <th>Модель</th>
+                                <th>Год</th>
+                                <th>Цвет</th>
+                                {% if session.user.role == 'admin' %}
+                                    <th>Владелец</th>
+                                {% endif %}
+                                <th>Действия</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for car in cars %}
+                                <tr class="position-relative">
+                                    <td>{{ car.brand }}</td>
+                                    <td>{{ car.model }}</td>
+                                    <td>
+                                        <span class="badge bg-primary rounded-pill">
+                                            {{ car.year }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="color-preview rounded-circle me-2"
+                                                style="background-color: {{ getColorHex(car.color) }}; width: 20px; height: 20px;">
+                                            </div>
+                                            {{ car.color }}
+                                        </div>
+                                    </td>
+                                    {% if session.user.role == 'admin' %}
+                                        <td>
+                                            {% if car.owner_name %}
+                                                {{ car.owner_name }}
+                                            {% else %}
+                                                <em class="text-muted">Не указан</em>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        <form action="/car/delete" method="post">
+                                            <input type="hidden" name="car_id" value="{{ car.id }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Вы уверены, что хотите удалить этот автомобиль?')">
+                                                <i class="bi bi-trash"></i> Удалить
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="{{ session.user.role == 'admin' ? 6 : 5 }}" class="text-center">
+                                        Нет автомобилей для отображения
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
