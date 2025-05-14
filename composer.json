@@ -12,6 +12,8 @@
     }
   ],
   "require": {
-    "twig/twig": "^3.20"
+    "twig/twig": "^3.20",
+    "phpoffice/phpspreadsheet": "^4.2",
+    "dompdf/dompdf": "^3.1"
   }
 }

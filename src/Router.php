@@ -5,6 +5,7 @@ namespace App;
 use App\Controllers\CarController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminController;
+use App\Controllers\ReportController;
 
 class Router
 {
@@ -32,6 +33,10 @@ class Router
         $this->addRoute('POST', '/car/add', [CarController::class, 'addCar']);
 
         $this->addRoute('POST', '/car/delete', [CarController::class, 'deleteCar']);
+
+        $this->addRoute('GET', '/report/pdf', [ReportController::class, 'generatePdfReport']);
+        $this->addRoute('GET', '/report/excel', [ReportController::class, 'generateExcelReport']);
+        $this->addRoute('GET', '/report/csv', [ReportController::class, 'generateCsvReport']);
 
         $this->addRoute('GET', '/admin/users', [AdminController::class, 'listUsers']);
         $this->addRoute('POST', '/admin/user/delete', [AdminController::class, 'deleteUser']);

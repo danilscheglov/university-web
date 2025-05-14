@@ -5,8 +5,13 @@ RUN apt-get update && \
     libpq-dev \
     unzip \
     git \
-    curl && \
-    docker-php-ext-install pdo pdo_pgsql
+    curl \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd zip pdo pdo_pgsql
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
